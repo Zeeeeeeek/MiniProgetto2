@@ -5,8 +5,6 @@ package it.unicam.cs.asdl2122.mp2;
 
 import java.util.*;
 
-// TODO completare gli import necessari
-
 // ATTENZIONE: è vietato includere import a pacchetti che non siano della Java SE
 
 /**
@@ -397,20 +395,33 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
         if(node == null) throw new NullPointerException("Il nodo di getAdjacentNodesOf è null");
         if(!nodesIndex.containsKey(node)) throw new IllegalArgumentException("Il nodo non esiste");
 
-        
-        return null;
+        Set<GraphNode<L>> result = new HashSet<GraphNode<L>>();
+        int nodeIndex = getNodeIndexOf(node);
+        for(int i = 0; i < matrix.size(); i++) {
+            if(matrix.get(nodeIndex).get(i) != null) {
+              if(nodeIndex == getNodeIndexOf(matrix.get(nodeIndex).get(i).getNode1())) {
+                  result.add(matrix.get(nodeIndex).get(i).getNode2());
+              } else {
+                  result.add(matrix.get(nodeIndex).get(i).getNode1());
+              }
+            }
+        }
+
+        return result;
     }
 
     @Override
     public Set<GraphNode<L>> getAdjacentNodesOf(L label) {
-        // TODO implementare
-        return null;
+        if(label == null) throw new NullPointerException("Etichetta null");
+        //Altre eccezioni controllate da getAdjacentNodesOf(GraphNode<L> node)
+        return getAdjacentNodesOf(new GraphNode<L>(label));
     }
 
     @Override
     public Set<GraphNode<L>> getAdjacentNodesOf(int i) {
-        // TODO implementare
-        return null;
+        if(i < 0 || i >= nodeCount()) throw new IndexOutOfBoundsException("Indice fuori dai limiti " +
+                "dell'intervallo [0, this.nodeCount() - 1]");
+        return getAdjacentNodesOf(getNode(i));
     }
 
     @Override
@@ -433,20 +444,32 @@ public class AdjacencyMatrixUndirectedGraph<L> extends Graph<L> {
 
     @Override
     public Set<GraphEdge<L>> getEdgesOf(GraphNode<L> node) {
-        // TODO implementare
-        return null;
+        if(node == null) throw new NullPointerException("nodo null");
+        if(!nodesIndex.containsKey(node)) throw new IllegalArgumentException("Nodo non presente");
+
+        Set<GraphEdge<L>> result = new HashSet<GraphEdge<L>>();
+
+        int nodeIndex = getNodeIndexOf(node);
+
+        for(int i = 0; i < matrix.size(); i++) {
+            if(matrix.get(nodeIndex).get(i) != null) result.add(matrix.get(nodeIndex).get(i));
+        }
+        return result;
     }
 
     @Override
     public Set<GraphEdge<L>> getEdgesOf(L label) {
-        // TODO implementare
-        return null;
+        if(label == null) throw new NullPointerException("etichetta nulla");
+        //Altre eccezioni coperte dal getEdgesOf(node)
+        return getEdgesOf(new GraphNode<L>(label));
     }
 
     @Override
     public Set<GraphEdge<L>> getEdgesOf(int i) {
-        // TODO implementare
-        return null;
+        if(i < 0 || i >= nodeCount()) throw new IndexOutOfBoundsException("Indice minore di 0 o maggiore o uguale " +
+                "a nodeCount()");
+
+        return getEdgesOf(getNode(i));
     }
 
     @Override
