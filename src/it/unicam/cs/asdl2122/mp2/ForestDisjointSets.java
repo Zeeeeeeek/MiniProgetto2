@@ -1,5 +1,7 @@
 package it.unicam.cs.asdl2122.mp2;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,13 +74,13 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
      * alberi.
      */
     public ForestDisjointSets() {
-        // TODO implementare
+        currentElements = new HashMap<>();
     }
 
     @Override
     public boolean isPresent(E e) {
-        // TODO implementare
-        return false;
+        if(e == null) throw new NullPointerException("Elemento di isPresent null");
+        return currentElements.containsKey(e);
     }
 
     /*
@@ -87,7 +89,9 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
      */
     @Override
     public void makeSet(E e) {
-        // TODO implementare
+        if(e == null) throw new NullPointerException("elemento di makeset null");
+        if(currentElements.containsKey(e)) throw new IllegalArgumentException("Elemento di makeset già presente");
+        currentElements.put(e, new Node<E>(e));
     }
 
     /*
@@ -97,8 +101,15 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
      */
     @Override
     public E findSet(E e) {
-        // TODO implementare
-        return null;
+        if(e == null) throw new NullPointerException("Elemento di findSet null");
+        //Se l'elemento non è in nessun nodo presente
+        if(!currentElements.containsKey(e)) return null;
+        //Sono sicuro ci sia
+        Node<E> node = currentElements.get(e);
+        if(node != node.parent) {
+            node.parent = currentElements.get(findSet(node.parent.item));
+        }
+        return node.parent.item;
     }
 
     /*
@@ -113,24 +124,48 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
      */
     @Override
     public void union(E e1, E e2) {
-        // TODO implementare
+        if(e1 == null || e2 == null) throw new NullPointerException("E1 o E2 null");
+        if(!isPresent(e1) || !isPresent(e2)) throw new IllegalArgumentException("e1 o e2 non presenti negli insiemi");
+        //Risalgo alle radici tramite il findSet di ognuno
+        Node<E> node1 = currentElements.get(findSet(e1));
+        Node<E> node2 = currentElements.get(findSet(e2));
+        //Se le radici sono lo stesso nodo, ovvero fanno parte dello stesso insieme il metodo si ferma
+        if(node1.equals(node2)) return;
+        //Sono sicuro non facciano parte dello stesso insieme, decido quindi quale delle due sarà la radice del nuovo
+        //albero
+        if(node1.rank > node2.rank) {
+            //Il nodo1 diventa la radice del nuovo albero
+            node2.parent = node1;
+            return;
+        }
+        node1.parent = node2;
+        if(node1.rank == node2.rank) node2.rank++;
     }
 
     @Override
     public Set<E> getCurrentRepresentatives() {
-        // TODO implementare
-        return null;
+        Set<E> result = new HashSet<>();
+        for(Node<E> node : currentElements.values()) {
+            if(node.parent.equals(node)) result.add(node.item);
+        }
+        return result;
     }
 
     @Override
     public Set<E> getCurrentElementsOfSetContaining(E e) {
-        // TODO implementare
-        return null;
+        if(e == null) throw new NullPointerException("element null");
+        if(!currentElements.containsKey(e)) throw new IllegalArgumentException("Elemento non contenuto");
+        Set<E> result = new HashSet<>();
+        Node<E> parent = currentElements.get(e).parent;
+        for(Node<E> node: currentElements.values()) {
+            if(node.parent.equals(parent)) result.add(node.item);
+        }
+        return result;
     }
 
     @Override
     public void clear() {
-        // TODO implementare
+        currentElements.clear();
     }
 
 }
