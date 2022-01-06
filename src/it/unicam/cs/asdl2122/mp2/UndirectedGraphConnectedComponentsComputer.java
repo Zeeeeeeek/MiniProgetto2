@@ -1,5 +1,6 @@
 package it.unicam.cs.asdl2122.mp2;
 
+import java.util.HashSet;
 import java.util.Set;
 
 //TODO completare gli import necessari
@@ -46,7 +47,24 @@ public class UndirectedGraphConnectedComponentsComputer<L> {
      *                                      se il grafo passato è orientato
      */
     public Set<Set<GraphNode<L>>> computeConnectedComponents(Graph<L> g) {
-        // TODO implementare
-        return null;
+        if(g == null) throw new NullPointerException("Grafo null");
+        if(g.isDirected()) throw new IllegalArgumentException("Grafo orientato NON ammesso");
+        //Pulisco il disjointset ad ogni chiamata
+        f.clear();
+
+        Set<Set<GraphNode<L>>> result = new HashSet<>();
+        //Creo un insieme singoletto per tutti i nodi del grafo
+        for(GraphNode<L> node: g.getNodes()) {
+            f.makeSet(node);
+        }
+        //Per ogni arco tra un nodo x e un nodo y faccio l'unione, i findset di x ed y sono controllati dal metodo union
+        for(GraphEdge<L> edge : g.getEdges()) {
+            f.union(edge.getNode1(), edge.getNode2());
+        }
+        //Per ogni rappresentante del DisjoinSet aggiungo al risultato il set dei suoi nodi
+        for(GraphNode<L> rapp : f.getCurrentRepresentatives()) {
+            result.add(f.getCurrentElementsOfSetContaining(rapp));
+        }
+        return result;
     }
 }

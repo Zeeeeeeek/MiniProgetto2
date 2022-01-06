@@ -158,6 +158,8 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
         Set<E> result = new HashSet<>();
         Node<E> parent = currentElements.get(e).parent;
         for(Node<E> node: currentElements.values()) {
+            //Potrebbero esserci dei nodi con i parent non aggiornati, quindi chiamo il findset su ogni nodo per un corretto risultato
+            findSet(node.item);
             if(node.parent.equals(parent)) result.add(node.item);
         }
         return result;
