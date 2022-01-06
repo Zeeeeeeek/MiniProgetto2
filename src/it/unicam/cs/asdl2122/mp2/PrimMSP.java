@@ -4,6 +4,9 @@ package it.unicam.cs.asdl2122.mp2;
 
 //ATTENZIONE: è vietato includere import a pacchetti che non siano della Java SE
 
+
+import java.util.ArrayList;
+import java.util.List;
 /**
  * Classe singoletto che implementa l'algoritmo di Prim per trovare un Minimum
  * Spanning Tree di un grafo non orientato, pesato e con pesi non negativi.
@@ -26,7 +29,7 @@ package it.unicam.cs.asdl2122.mp2;
 public class PrimMSP<L> {
 
     // TODO inserire le variabili istanza che si ritengono necessarie
-
+    List<GraphNode<L>> priorityQueue;
     /*
      * In particolare: si deve usare una coda con priorità che può semplicemente
      * essere realizzata con una List<GraphNode<L>> e si deve mantenere un
@@ -38,7 +41,7 @@ public class PrimMSP<L> {
      * vuota.
      */
     public PrimMSP() {
-        // TODO implementare
+        priorityQueue = new ArrayList<>();
     }
 
     /**
@@ -55,13 +58,54 @@ public class PrimMSP<L> {
      *              dell'albero di copertura minimo. Tale nodo sarà la radice
      *              dell'albero di copertura trovato
      * 
-     * @throw NullPointerException se il grafo g o il nodo sorgente s sono nulli
-     * @throw IllegalArgumentException se il nodo sorgente s non esiste in g
-     * @throw IllegalArgumentException se il grafo g è orientato, non pesato o
+     * @throws NullPointerException se il grafo g o il nodo sorgente s sono nulli
+     * @throws IllegalArgumentException se il nodo sorgente s non esiste in g
+     * @throws IllegalArgumentException se il grafo g è orientato, non pesato o
      *        con pesi negativi
      */
     public void computeMSP(Graph<L> g, GraphNode<L> s) {
-        // TODO implementare
+        if(g == null || s == null) throw new NullPointerException("Grafo o nodo null");
+        if(g.getNode(s) == null) throw new IllegalArgumentException("Il nodo non appartiene al grafo");
+        if(g.isDirected()) throw new IllegalArgumentException("Grafo orientato");
+        //Controllo se ci sono archi con pesi negativi o non pesati
+        for(GraphEdge<L> edge: g.getEdges()) {
+            if(!edge.hasWeight()) throw new IllegalArgumentException();
+            if(edge.getWeight() < 0) throw new IllegalArgumentException();
+        }
+        //Imposto floatingpointDistance e previous di ogni nodo
+        for(GraphNode<L> node: g.getNodes()) {
+            if(!node.equals(s)) {
+                node.setFloatingPointDistance(Double.POSITIVE_INFINITY);
+            } else {
+                //il nodo corrisponde ad s
+                node.setFloatingPointDistance(0);
+            }
+            priorityQueue.add(node);
+            node.setColor(GraphNode.COLOR_WHITE);
+            node.setPrevious(null);
+        }
+
+        while(!priorityQueue.isEmpty()) {
+            GraphNode<L> u = extractMin();
+            u.setColor(GraphNode.COLOR_BLACK);
+            for(GraphNode<L> v : g.getAdjacentNodesOf(u)) {
+                if(priorityQueue.contains(v) && g.getEdge(u, v).getWeight() < v.getFloatingPointDistance()) {
+                    v.setFloatingPointDistance(g.getEdge(u, v).getWeight());
+                    v.setPrevious(u);
+                    v.setColor(GraphNode.COLOR_BLACK);
+                }
+            }
+        }
+
     }
 
+    private GraphNode<L> extractMin() {
+        GraphNode<L> min = priorityQueue.get(0);
+        for(int i = 1; i < priorityQueue.size(); i++) {
+            if(priorityQueue.get(i).getFloatingPointDistance() < min.getFloatingPointDistance())
+                min = priorityQueue.get(i);
+        }
+        priorityQueue.remove(min);
+        return min;
+    }
 }
