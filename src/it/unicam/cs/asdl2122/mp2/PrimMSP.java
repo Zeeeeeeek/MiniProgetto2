@@ -1,6 +1,5 @@
 package it.unicam.cs.asdl2122.mp2;
 
-//TODO completare gli import necessari
 
 //ATTENZIONE: è vietato includere import a pacchetti che non siano della Java SE
 
@@ -28,7 +27,6 @@ import java.util.List;
  */
 public class PrimMSP<L> {
 
-    // TODO inserire le variabili istanza che si ritengono necessarie
     List<GraphNode<L>> priorityQueue;
     /*
      * In particolare: si deve usare una coda con priorità che può semplicemente
@@ -72,7 +70,7 @@ public class PrimMSP<L> {
             if(!edge.hasWeight()) throw new IllegalArgumentException();
             if(edge.getWeight() < 0) throw new IllegalArgumentException();
         }
-        //Imposto floatingpointDistance e previous di ogni nodo
+        //Imposto floatingpointDistance ,previous e colore di ogni nodo
         for(GraphNode<L> node: g.getNodes()) {
             if(!node.equals(s)) {
                 node.setFloatingPointDistance(Double.POSITIVE_INFINITY);

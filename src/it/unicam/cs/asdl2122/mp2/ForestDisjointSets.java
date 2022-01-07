@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-//TODO completare gli import necessari
-
 //ATTENZIONE: è vietato includere import a pacchetti che non siano della Java SE
 
 /**
@@ -80,6 +78,7 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     @Override
     public boolean isPresent(E e) {
         if(e == null) throw new NullPointerException("Elemento di isPresent null");
+        //Un elemento è presente se l'hashmap contiene la key E
         return currentElements.containsKey(e);
     }
 
@@ -91,6 +90,8 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     public void makeSet(E e) {
         if(e == null) throw new NullPointerException("elemento di makeset null");
         if(currentElements.containsKey(e)) throw new IllegalArgumentException("Elemento di makeset già presente");
+        //Dato che il metodo containsKey e put dell'hashmap hanno una complessità O(1) allora viene garantita la
+        //complessità richiesta
         currentElements.put(e, new Node<E>(e));
     }
 
@@ -104,7 +105,8 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
         if(e == null) throw new NullPointerException("Elemento di findSet null");
         //Se l'elemento non è in nessun nodo presente
         if(!currentElements.containsKey(e)) return null;
-        //Sono sicuro ci sia
+        //Sono sicuro ci sia, dunque salvo il nodo in una variabile locale e aggiorno il parent di ogni nodo ricorsivamente
+        //fino  quando non trovo il nodo che ha come parent se stesso. Questo indicia che è la root dell'albero
         Node<E> node = currentElements.get(e);
         if(node != node.parent) {
             node.parent = currentElements.get(findSet(node.parent.item));
@@ -126,7 +128,7 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     public void union(E e1, E e2) {
         if(e1 == null || e2 == null) throw new NullPointerException("E1 o E2 null");
         if(!isPresent(e1) || !isPresent(e2)) throw new IllegalArgumentException("e1 o e2 non presenti negli insiemi");
-        //Risalgo alle radici tramite il findSet di ognuno
+        //Risalgo alle radici tramite il findSet di ognuno, eseguo di conseguenza la "compressione del cammino"
         Node<E> node1 = currentElements.get(findSet(e1));
         Node<E> node2 = currentElements.get(findSet(e2));
         //Se le radici sono lo stesso nodo, ovvero fanno parte dello stesso insieme il metodo si ferma
@@ -139,6 +141,7 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
             return;
         }
         node1.parent = node2;
+        //Qualora i rank dei nodi fosse uguali allora il secondo(e2) deve aumentare
         if(node1.rank == node2.rank) node2.rank++;
     }
 
@@ -146,6 +149,9 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
     public Set<E> getCurrentRepresentatives() {
         Set<E> result = new HashSet<>();
         for(Node<E> node : currentElements.values()) {
+            //In questo metodo controllo solo se il nodo ha se stesso come parent. Non mi preoccupo di nodi che potrebbero
+            //avere i parent aggiornati poiché mi interessano solo le root degli alberi che so di certo essere aggiornate
+            //ogni qualvolta venga eseguito il metodo union
             if(node.parent.equals(node)) result.add(node.item);
         }
         return result;
@@ -156,11 +162,12 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
         if(e == null) throw new NullPointerException("element null");
         if(!currentElements.containsKey(e)) throw new IllegalArgumentException("Elemento non contenuto");
         Set<E> result = new HashSet<>();
-        Node<E> parent = currentElements.get(e).parent;
+        Node<E> parent = currentElements.get(findSet(e));
         for(Node<E> node: currentElements.values()) {
-            //Potrebbero esserci dei nodi con i parent non aggiornati, quindi chiamo il findset su ogni nodo per un corretto risultato
-            findSet(node.item);
-            if(node.parent.equals(parent)) result.add(node.item);
+            //Dopo un unione di insieme potrebbe capitare che dei nodi non abbiano aggiornato i parent, poiché durante
+            //l'union vengono cambiati solo i parent delle root. Di conseguenza eseguo il findSet di ogni nodo e se il
+            //risultato è uguale secondo l'equals della classe E allora lo aggiungo al risultato
+            if(findSet(node.item).equals(parent.item)) result.add(node.item);
         }
         return result;
     }

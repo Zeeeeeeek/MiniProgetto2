@@ -3,8 +3,6 @@ package it.unicam.cs.asdl2122.mp2;
 import java.util.HashSet;
 import java.util.Set;
 
-//TODO completare gli import necessari
-
 //ATTENZIONE: è vietato includere import a pacchetti che non siano della Java SE
 
 /**
@@ -57,7 +55,8 @@ public class UndirectedGraphConnectedComponentsComputer<L> {
         for(GraphNode<L> node: g.getNodes()) {
             f.makeSet(node);
         }
-        //Per ogni arco tra un nodo x e un nodo y faccio l'unione, i findset di x ed y sono controllati dal metodo union
+        //Per ogni arco tra un nodo x e un nodo y faccio l'unione, i findset di x ed y sono eseguiti nel metodo union per
+        //ambo i nodi
         for(GraphEdge<L> edge : g.getEdges()) {
             f.union(edge.getNode1(), edge.getNode2());
         }

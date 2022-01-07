@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//TODO completare gli import necessari
 
 //ATTENZIONE: è vietato includere import a pacchetti che non siano della Java SE
 
@@ -32,7 +31,7 @@ public class KruskalMSP<L> {
      */
     private ForestDisjointSets<GraphNode<L>> disjointSets;
 
-    // TODO inserire eventuali variabili istanza o classi interne necessarie
+
     List<GraphEdge<L>> graphEdges = new ArrayList<>();
 
     /**
@@ -66,11 +65,11 @@ public class KruskalMSP<L> {
         for(GraphNode<L> node : g.getNodes()) {
             disjointSets.makeSet(node);
         }
-        //todo forse implementabile nel quicksort
+
         //Controllo se gli archi non sono pesati oppure hanno peso negativo
         for(GraphEdge<L> edge : g.getEdges()) {
             if(!edge.hasWeight()) throw new IllegalArgumentException("Almeno un arco non è pesato");
-            if(edge.getWeight() <= 0) throw new IllegalArgumentException("Almeno un arco ha indice negativo");
+            if(edge.getWeight() < 0) throw new IllegalArgumentException("Almeno un arco ha indice negativo");
             graphEdges.add(edge);
         }
         //Ordino gli archi in ordine crescente con un Quicksort

@@ -588,6 +588,8 @@ public abstract class Graph<L> {
      *         nodi dell'arco dato in qualsiasi ordine
      * @throws NullPointerException
      *                                  l'arco passato è null
+     * @throws IllegalArgumentException
+     *                                  se almeno uno dei due nodi non esiste nel grafo
      */
     public abstract GraphEdge<L> getEdge(GraphEdge<L> edge);
 
