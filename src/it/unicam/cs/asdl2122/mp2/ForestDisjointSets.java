@@ -13,8 +13,7 @@ import java.util.Set;
  * vedano le istruzioni o il libro di testo Cormen et al. (terza edizione)
  * Capitolo 21 Sezione 3.
  * 
- * @author Luca Tesei (template) **INSERIRE NOME, COGNOME ED EMAIL
- *         xxxx@studenti.unicam.it DELLO STUDENTE** (implementazione)
+ * @author Luca Tesei (template) Enrico Ulissi enrico.ulissi@studenti.unicam.it(implementazione)
  *
  * @param <E>
  *                il tipo degli elementi degli insiemi disgiunti
@@ -150,7 +149,7 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
         Set<E> result = new HashSet<>();
         for(Node<E> node : currentElements.values()) {
             //In questo metodo controllo solo se il nodo ha se stesso come parent. Non mi preoccupo di nodi che potrebbero
-            //avere i parent aggiornati poiché mi interessano solo le root degli alberi che so di certo essere aggiornate
+            //avere i parent non aggiornati poiché mi interessano solo le root degli alberi che so di certo essere aggiornate
             //ogni qualvolta venga eseguito il metodo union
             if(node.parent.equals(node)) result.add(node.item);
         }
@@ -162,12 +161,11 @@ public class ForestDisjointSets<E> implements DisjointSets<E> {
         if(e == null) throw new NullPointerException("element null");
         if(!currentElements.containsKey(e)) throw new IllegalArgumentException("Elemento non contenuto");
         Set<E> result = new HashSet<>();
-        Node<E> parent = currentElements.get(findSet(e));
         for(Node<E> node: currentElements.values()) {
-            //Dopo un unione di insieme potrebbe capitare che dei nodi non abbiano aggiornato i parent, poiché durante
+            //Dopo un'unione di due insiemi potrebbe capitare che dei nodi non abbiano aggiornato i parent, poiché durante
             //l'union vengono cambiati solo i parent delle root. Di conseguenza eseguo il findSet di ogni nodo e se il
             //risultato è uguale secondo l'equals della classe E allora lo aggiungo al risultato
-            if(findSet(node.item).equals(parent.item)) result.add(node.item);
+            if(findSet(node.item).equals(findSet(e))) result.add(node.item);
         }
         return result;
     }

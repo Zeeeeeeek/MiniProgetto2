@@ -18,8 +18,7 @@ import java.util.List;
  * Si possono usare i colori dei nodi per registrare la scoperta e la visita
  * effettuata dei nodi.
  * 
- * @author Luca Tesei (template) **INSERIRE NOME, COGNOME ED EMAIL
- *         xxxx@studenti.unicam.it DELLO STUDENTE** (implementazione)
+ * @author Luca Tesei (template) Enrico Ulissi enrico.ulissi@studenti.unicam.it (implementazione)
  * 
  * @param <L>
  *                tipo delle etichette dei nodi del grafo
@@ -65,12 +64,8 @@ public class PrimMSP<L> {
         if(g == null || s == null) throw new NullPointerException("Grafo o nodo null");
         if(g.getNode(s) == null) throw new IllegalArgumentException("Il nodo non appartiene al grafo");
         if(g.isDirected()) throw new IllegalArgumentException("Grafo orientato");
-        //Controllo se ci sono archi con pesi negativi o non pesati
-        for(GraphEdge<L> edge: g.getEdges()) {
-            if(!edge.hasWeight()) throw new IllegalArgumentException();
-            if(edge.getWeight() < 0) throw new IllegalArgumentException();
-        }
-        //Imposto floatingpointDistance ,previous e colore di ogni nodo
+
+        //Imposto floatingpointDistance, previous e colore di ogni nodo
         for(GraphNode<L> node: g.getNodes()) {
             if(!node.equals(s)) {
                 node.setFloatingPointDistance(Double.POSITIVE_INFINITY);
@@ -87,6 +82,11 @@ public class PrimMSP<L> {
             GraphNode<L> u = extractMin();
             u.setColor(GraphNode.COLOR_BLACK);
             for(GraphNode<L> v : g.getAdjacentNodesOf(u)) {
+                if(!g.getEdge(u, v).hasWeight()) throw new IllegalArgumentException();
+                if(g.getEdge(u, v).getWeight() < 0) throw new IllegalArgumentException();
+                //Se il nodo v fa parte della priority queue e il suo floatingdistance è maggiore del peso dell'
+                //arco tra u e v allora aggiorno il floatingDistance con il peso dell'arco e scopro il nodo
+                //colorandolo di nero
                 if(priorityQueue.contains(v) && g.getEdge(u, v).getWeight() < v.getFloatingPointDistance()) {
                     v.setFloatingPointDistance(g.getEdge(u, v).getWeight());
                     v.setPrevious(u);

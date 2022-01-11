@@ -11,8 +11,7 @@ import java.util.Set;
  * classe {@ForestDisjointSets<GraphNode<L>>}) per gestire insiemi disgiunti di
  * nodi del grafo che sono, alla fine del calcolo, le componenti connesse.
  * 
- * @author Luca Tesei (template) **INSERIRE NOME, COGNOME ED EMAIL
- *         xxxx@studenti.unicam.it DELLO STUDENTE** (implementazione)
+ * @author Luca Tesei (template) Enrico Ulissi enrico.ulissi@studenti.unicam.it (implementazione)
  *
  * @param <L>
  *                il tipo delle etichette dei nodi del grafo

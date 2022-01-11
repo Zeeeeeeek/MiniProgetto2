@@ -16,8 +16,7 @@ import java.util.Set;
  * {@code ForestDisjointSets<GraphNode<L>>} per gestire una collezione di
  * insiemi disgiunti di nodi del grafo.
  * 
- * @author Luca Tesei (template) **INSERIRE NOME, COGNOME ED EMAIL
- *         xxxx@studenti.unicam.it DELLO STUDENTE** (implementazione)
+ * @author Luca Tesei (template) Enrico Ulissi enrico.ulissi@studenti.unicam.it (implementazione)
  * 
  * @param <L>
  *                tipo delle etichette dei nodi del grafo
@@ -32,7 +31,7 @@ public class KruskalMSP<L> {
     private ForestDisjointSets<GraphNode<L>> disjointSets;
 
 
-    List<GraphEdge<L>> graphEdges = new ArrayList<>();
+    List<GraphEdge<L>> graphEdges;
 
     /**
      * Costruisce un calcolatore di un albero di copertura minimo che usa
@@ -65,13 +64,7 @@ public class KruskalMSP<L> {
         for(GraphNode<L> node : g.getNodes()) {
             disjointSets.makeSet(node);
         }
-
-        //Controllo se gli archi non sono pesati oppure hanno peso negativo
-        for(GraphEdge<L> edge : g.getEdges()) {
-            if(!edge.hasWeight()) throw new IllegalArgumentException("Almeno un arco non è pesato");
-            if(edge.getWeight() < 0) throw new IllegalArgumentException("Almeno un arco ha indice negativo");
-            graphEdges.add(edge);
-        }
+        graphEdges = new ArrayList<>(g.getEdges());
         //Ordino gli archi in ordine crescente con un Quicksort
         quickSort(0, graphEdges.size()-1);
 
@@ -80,6 +73,12 @@ public class KruskalMSP<L> {
 
         //Uso un foreach dell'Arraylist dato che l'iterazione garantisce l'ordine di estrazione dei dati
         for(GraphEdge<L> edge : graphEdges) {
+            if(!edge.hasWeight()) throw new IllegalArgumentException("Almeno un arco non è pesato");
+            if(edge.getWeight() < 0) throw new IllegalArgumentException("Almeno un arco ha peso negativo");
+
+            //Se i findset dei nodi di un arco è diverso allora unisco il loro insieme e aggiungo l'arco al
+            //risultato. Nel caso contrario i nodi fanno già parte dello stesso sotto-albero di conseguenza è un arco
+            //rosso e quindi non lo aggiungo.
             if(!disjointSets.findSet(edge.getNode1()).equals(disjointSets.findSet(edge.getNode2()))) {
                 result.add(edge);
                 disjointSets.union(edge.getNode1(), edge.getNode2());

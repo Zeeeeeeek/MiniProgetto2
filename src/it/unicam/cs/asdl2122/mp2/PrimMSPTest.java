@@ -257,13 +257,13 @@ class PrimMSPTest {
         assertTrue(a.getColor() == GraphNode.COLOR_BLACK);
         assertTrue(b.getPrevious() == null);
         assertTrue(b.getFloatingPointDistance() == 0);
-        assertTrue(a.getColor() == GraphNode.COLOR_BLACK);
+        assertTrue(b.getColor() == GraphNode.COLOR_BLACK);
         assertTrue(c.getPrevious() == d);
         assertTrue(c.getFloatingPointDistance() == 2.0);
-        assertTrue(a.getColor() == GraphNode.COLOR_BLACK);
+        assertTrue(c.getColor() == GraphNode.COLOR_BLACK);
         assertTrue(d.getPrevious() == b);
         assertTrue(d.getFloatingPointDistance() == 4.0);
-        assertTrue(a.getColor() == GraphNode.COLOR_BLACK);
+        assertTrue(d.getColor() == GraphNode.COLOR_BLACK);
         assertTrue(e.getPrevious() == d);
         assertTrue(e.getFloatingPointDistance() == 1.0);
         assertTrue(e.getColor() == GraphNode.COLOR_BLACK);
